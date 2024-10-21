@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 const sequelize = new Sequelize('twitter_db', 'postgres', '369258bn', {
   host: 'localhost',
@@ -35,11 +35,14 @@ sequelize.sync({ force: true }).then(() => {
   console.log('Database & tables created!');
 });
 
-// Adicionando suporte ao JSON para as requisições
+// Middleware para analisar o corpo das requisições
 app.use(express.json());
 
-// Rota de registro de usuário
-app.post('/signup', async (req, res) => {
+// Servir os arquivos estáticos do build do React
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Rota de criação de usuário
+app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -63,8 +66,7 @@ app.post('/login', async (req, res) => {
     if (!validPassword) {
       return res.status(401).json({ error: 'Invalid password' });
     }
-
-    res.json({ message: 'Login successful', user });
+    res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     res.status(500).json({ error: 'Error logging in' });
   }
@@ -104,16 +106,13 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Servir os arquivos estáticos do build do React
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-// Rota padrão para todas as outras rotas do front-end React
+// Rota para qualquer requisição que não tenha sido capturada pelos outros endpoints
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
 
 module.exports = { sequelize, connectDB, User, Tweet };
