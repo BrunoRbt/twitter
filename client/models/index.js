@@ -66,6 +66,19 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Rota para obter os tweets das pessoas que o usuário segue
+app.get('/feed', async (req, res) => {
+  try {
+    const tweets = await Tweet.findAll({
+      include: User,
+      order: [['createdAt', 'DESC']]
+    });
+    res.json(tweets);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching feed' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
