@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const sequelize = new Sequelize('database', 'username', 'password', {
+const sequelize = new Sequelize('database', 'postgres', '369258bn', {
   host: 'localhost',
   dialect: 'postgres',
 });
@@ -76,6 +76,17 @@ app.get('/feed', async (req, res) => {
     res.json(tweets);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching feed' });
+  }
+});
+
+// Rota para postar um novo tweet
+app.post('/tweet', async (req, res) => {
+  const { content, userId } = req.body;
+  try {
+    const tweet = await Tweet.create({ content, userId });
+    res.status(201).json(tweet);
+  } catch (error) {
+    res.status(500).json({ error: 'Error posting tweet' });
   }
 });
 
