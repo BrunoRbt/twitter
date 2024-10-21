@@ -19,6 +19,9 @@ const connectDB = async () => {
   }
 };
 
+// Chamar a função connectDB quando o servidor iniciar
+connectDB();
+
 const User = require('./models/user');
 const Tweet = require('./models/tweet');
 
@@ -87,6 +90,16 @@ app.post('/tweet', async (req, res) => {
     res.status(201).json(tweet);
   } catch (error) {
     res.status(500).json({ error: 'Error posting tweet' });
+  }
+});
+
+// Adicionar uma rota de teste
+app.get('/test-db', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.send('Connection has been established successfully.');
+  } catch (error) {
+    res.status(500).send('Unable to connect to the database: ' + error.message);
   }
 });
 
