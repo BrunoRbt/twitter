@@ -1,6 +1,7 @@
 const express = require('express');
 const { Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -101,6 +102,14 @@ app.get('/test-db', async (req, res) => {
   } catch (error) {
     res.status(500).send('Unable to connect to the database: ' + error.message);
   }
+});
+
+// Servir os arquivos estáticos do build do React
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Rota padrão para todas as outras rotas do front-end React
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
 app.listen(port, () => {
