@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const sequelize = new Sequelize('database', 'postgres', '369258bn', {
+const sequelize = new Sequelize('twitter_db', 'postgres', '369258bn', {
   host: 'localhost',
   dialect: 'postgres',
 });
